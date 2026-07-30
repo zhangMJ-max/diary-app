@@ -36,10 +36,46 @@ v-for="diary in diaries"
 </div>
 
 
+
+
+<!-- 项目展示 -->
+
+<section class="projects">
+
+
+<h1>
+我的项目
+</h1>
+
+
+
+<div class="project-list">
+
+
+<ProjectCard
+
+v-for="project in projects"
+
+:key="project.id"
+
+:project="project"
+
+/>
+
+
+</div>
+
+
+
+</section>
+
+
+
 </div>
 
 
 </template>
+
 
 
 
@@ -50,7 +86,14 @@ import {ref,onMounted} from "vue"
 
 import {useRouter} from "vue-router"
 
+
 import DiaryCard from "../components/DiaryCard.vue"
+
+
+import ProjectCard from "../components/ProjectCard.vue"
+
+
+import projects from "../data/projects"
 
 
 
@@ -62,11 +105,13 @@ const diaries = ref([])
 
 
 
+
 function goCreate(){
 
 router.push("/create")
 
 }
+
 
 
 
@@ -110,7 +155,9 @@ loadDiaries()
 
 padding:40px;
 
+
 max-width:1200px;
+
 
 margin:auto;
 
@@ -124,6 +171,7 @@ h1{
 
 text-align:center;
 
+
 margin-bottom:20px;
 
 
@@ -131,10 +179,12 @@ margin-bottom:20px;
 
 
 
+
 .create-btn{
 
 
 display:block;
+
 
 margin:0 auto 40px;
 
@@ -144,10 +194,12 @@ padding:12px 25px;
 
 background:#333;
 
+
 color:white;
 
 
 border:none;
+
 
 border-radius:8px;
 
@@ -159,6 +211,7 @@ cursor:pointer;
 
 
 
+
 .create-btn:hover{
 
 
@@ -166,6 +219,7 @@ opacity:0.8;
 
 
 }
+
 
 
 
@@ -187,10 +241,55 @@ gap:25px;
 
 
 
+
+/* 项目区域 */
+
+
+.projects{
+
+
+margin-top:80px;
+
+
+}
+
+
+
+
+
+.project-list{
+
+
+display:grid;
+
+
+grid-template-columns:repeat(3,1fr);
+
+
+gap:25px;
+
+
+}
+
+
+
+
+
 @media(max-width:700px){
 
 
+
 .diary-list{
+
+
+grid-template-columns:1fr;
+
+
+}
+
+
+
+.project-list{
 
 
 grid-template-columns:1fr;
@@ -209,7 +308,9 @@ padding:20px;
 }
 
 
+
 }
+
 
 
 </style>
