@@ -4,7 +4,7 @@
 
 
 <h1>
-我的日记
+我的技术笔记
 </h1>
 
 
@@ -13,22 +13,22 @@ class="create-btn"
 @click="goCreate"
 >
 
-+ 新建日记
++ 新建笔记
 
 </button>
 
 
 
-<div class="diary-list">
+<div class="note-list">
 
 
-<DiaryCard
+<NoteCard
 
-v-for="diary in diaries"
+v-for="note in notes"
 
-:key="diary.id"
+:key="note.id"
 
-:diary="diary"
+:note="note"
 
 />
 
@@ -38,7 +38,9 @@ v-for="diary in diaries"
 
 
 
+
 <!-- 项目展示 -->
+
 
 <section class="projects">
 
@@ -46,6 +48,7 @@ v-for="diary in diaries"
 <h1>
 我的项目
 </h1>
+
 
 
 
@@ -71,10 +74,13 @@ v-for="project in projects"
 
 
 
+
 </div>
 
-
 </template>
+
+
+
 
 
 
@@ -84,16 +90,24 @@ v-for="project in projects"
 
 import {ref,onMounted} from "vue"
 
+
 import {useRouter} from "vue-router"
 
 
-import DiaryCard from "../components/DiaryCard.vue"
+
+import NoteCard from "../components/NoteCard.vue"
 
 
 import ProjectCard from "../components/ProjectCard.vue"
 
 
+
 import projects from "../data/projects"
+
+
+import {notes as noteData} from "../data/notes"
+
+
 
 
 
@@ -101,44 +115,76 @@ const router = useRouter()
 
 
 
-const diaries = ref([])
+const notes = ref([])
+
 
 
 
 
 function goCreate(){
 
+
 router.push("/create")
 
-}
-
-
-
-
-function loadDiaries(){
-
-
-const data = localStorage.getItem("diaries")
-
-
-if(data){
-
-diaries.value = JSON.parse(data)
 
 }
 
 
+
+
+
+
+function loadNotes(){
+
+
+
+const saveNotes = localStorage.getItem("notes")
+
+
+
+if(saveNotes){
+
+
+
+const userNotes = JSON.parse(saveNotes)
+
+
+
+notes.value=[
+
+...userNotes,
+
+...noteData
+
+]
+
+
+
+}else{
+
+
+notes.value = noteData
+
+
 }
+
+
+
+}
+
+
 
 
 
 onMounted(()=>{
 
 
-loadDiaries()
+loadNotes()
 
 
 })
+
+
 
 
 
@@ -147,22 +193,32 @@ loadDiaries()
 
 
 
+
+
+
+
+
 <style scoped>
+
 
 
 .home{
 
 
-padding:40px;
-
-
 max-width:1200px;
 
 
-margin:auto;
+margin:0 auto;
+
+
+padding:40px;
 
 
 }
+
+
+
+
 
 
 
@@ -172,10 +228,16 @@ h1{
 text-align:center;
 
 
-margin-bottom:20px;
+margin-bottom:30px;
+
+
+font-size:32px;
 
 
 }
+
+
+
 
 
 
@@ -186,10 +248,10 @@ margin-bottom:20px;
 display:block;
 
 
-margin:0 auto 40px;
+margin:0 auto 50px;
 
 
-padding:12px 25px;
+padding:12px 30px;
 
 
 background:#333;
@@ -201,13 +263,17 @@ color:white;
 border:none;
 
 
-border-radius:8px;
+border-radius:10px;
 
 
 cursor:pointer;
 
 
+font-size:15px;
+
+
 }
+
 
 
 
@@ -215,7 +281,7 @@ cursor:pointer;
 .create-btn:hover{
 
 
-opacity:0.8;
+opacity:.8;
 
 
 }
@@ -224,7 +290,9 @@ opacity:0.8;
 
 
 
-.diary-list{
+
+
+.note-list{
 
 
 display:grid;
@@ -242,13 +310,14 @@ gap:25px;
 
 
 
-/* 项目区域 */
+
+
 
 
 .projects{
 
 
-margin-top:80px;
+margin-top:100px;
 
 
 }
@@ -260,16 +329,26 @@ margin-top:80px;
 .project-list{
 
 
-display:grid;
+display:flex;
 
 
-grid-template-columns:repeat(3,1fr);
+justify-content:center;
 
 
-gap:25px;
+align-items:center;
+
+
+gap:30px;
+
+
+flex-wrap:wrap;
 
 
 }
+
+
+
+
 
 
 
@@ -279,23 +358,25 @@ gap:25px;
 
 
 
-.diary-list{
+.note-list{
 
 
 grid-template-columns:1fr;
 
 
 }
+
 
 
 
 .project-list{
 
 
-grid-template-columns:1fr;
+flex-direction:column;
 
 
 }
+
 
 
 

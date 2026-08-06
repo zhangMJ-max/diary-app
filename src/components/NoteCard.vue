@@ -1,29 +1,35 @@
 <template>
 
   <div 
-  class="diary-card"
+  class="note-card"
   @click="goDetail"
   >
 
 
     <h2>
-      {{ diary.title }}
+      {{ note.title }}
     </h2>
 
 
+    <p class="category">
+      {{ note.category }}
+    </p>
+
+
     <p class="date">
-      {{ diary.date }}
+      {{ note.date }}
     </p>
 
 
     <p class="content">
-      {{ diary.content }}
+      {{ note.content }}
     </p>
 
 
   </div>
 
 </template>
+
 
 
 
@@ -36,7 +42,7 @@ import {useRouter} from "vue-router"
 
 const props = defineProps({
 
-  diary:{
+  note:{
     type:Object,
     required:true
   }
@@ -53,8 +59,8 @@ function goDetail(){
 
 
 router.push(
-    
-`/detail/${props.diary.id}`
+
+`/detail/${props.note.id}`
 
 )
 
@@ -66,10 +72,11 @@ router.push(
 
 
 
+
 <style scoped>
 
 
-.diary-card{
+.note-card{
 
 
 padding:25px;
@@ -97,7 +104,7 @@ cursor:pointer;
 
 
 
-.diary-card:hover{
+.note-card:hover{
 
 
 transform:translateY(-5px);
@@ -112,10 +119,38 @@ box-shadow:
 
 
 
-.diary-card h2{
+.note-card h2{
 
 
 margin-bottom:12px;
+
+
+}
+
+
+
+.category{
+
+
+display:inline-block;
+
+
+background:#333;
+
+
+color:white;
+
+
+padding:5px 12px;
+
+
+border-radius:20px;
+
+
+font-size:13px;
+
+
+margin-bottom:15px;
 
 
 }
@@ -127,7 +162,9 @@ margin-bottom:12px;
 
 font-size:14px;
 
+
 color:#888;
+
 
 margin-bottom:15px;
 
@@ -141,10 +178,24 @@ margin-bottom:15px;
 
 line-height:1.8;
 
+
 color:#555;
 
 
+display:-webkit-box;
+
+
+-webkit-line-clamp:4;
+
+
+-webkit-box-orient:vertical;
+
+
+overflow:hidden;
+
+
 }
+
 
 
 </style>

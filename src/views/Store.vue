@@ -15,8 +15,8 @@ Vue Mini Store
 
 
 
-<div class="products">
 
+<div class="products">
 
 
 <ProductCard
@@ -30,8 +30,8 @@ v-for="item in productStore.products"
 />
 
 
-
 </div>
+
 
 
 
@@ -39,6 +39,7 @@ v-for="item in productStore.products"
 
 
 </template>
+
 
 
 
@@ -66,19 +67,20 @@ const productStore = useProductStore()
 
 
 
+
 <style scoped>
 
 
 .store{
 
 
-padding:40px;
-
-
 max-width:1200px;
 
 
-margin:auto;
+margin:0 auto;
+
+
+padding:60px 40px;
 
 
 }
@@ -91,6 +93,31 @@ h1{
 text-align:center;
 
 
+font-size:36px;
+
+
+margin-bottom:10px;
+
+
+}
+
+
+
+p{
+
+
+text-align:center;
+
+
+color:#666;
+
+
+font-size:18px;
+
+
+margin-bottom:50px;
+
+
 }
 
 
@@ -101,22 +128,29 @@ text-align:center;
 display:grid;
 
 
-grid-template-columns:repeat(3,1fr);
+grid-template-columns:
+
+repeat(auto-fit,minmax(260px,1fr));
 
 
-gap:30px;
-
-
-margin-top:40px;
+gap:35px;
 
 
 }
 
 
 
-
-
 @media(max-width:700px){
+
+
+.store{
+
+
+padding:30px 20px;
+
+
+}
+
 
 
 .products{
@@ -129,6 +163,7 @@ grid-template-columns:1fr;
 
 
 }
+
 
 
 </style>

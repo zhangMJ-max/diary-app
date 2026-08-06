@@ -5,7 +5,7 @@
 
 
 <h1>
-日记详情
+笔记详情
 </h1>
 
 
@@ -15,23 +15,31 @@
 
 <h2>
 
-{{ diary.title }}
+{{ note.title }}
 
 </h2>
 
 
 
-<p class="date">
+<p class="category">
 
-{{ diary.date }}
+{{ note.category }}
 
 </p>
 
 
 
-<p>
+<p class="date">
 
-{{ diary.content }}
+{{ note.date }}
+
+</p>
+
+
+
+<p class="content">
+
+{{ note.content }}
 
 </p>
 
@@ -48,6 +56,7 @@
 
 
 
+
 <script setup>
 
 
@@ -57,30 +66,25 @@ import {useRoute} from "vue-router"
 
 
 
+import {notes} from "../data/notes"
+
+
+
 const route = useRoute()
 
 
 
-const diary = ref({})
+const note = ref({})
 
 
 
 
-function loadDiary(){
 
-
-const data = localStorage.getItem("diaries")
-
-
-
-if(data){
-
-
-const diaries = JSON.parse(data)
+function loadNote(){
 
 
 
-const result = diaries.find(item=>{
+const result = notes.find(item=>{
 
 
 return item.id == route.params.id
@@ -93,31 +97,33 @@ return item.id == route.params.id
 if(result){
 
 
-diary.value=result
+note.value=result
 
 
 }
 
 
-}
-
-
 
 }
+
+
 
 
 
 onMounted(()=>{
 
 
-loadDiary()
+loadNote()
 
 
 })
 
 
 
+
+
 </script>
+
 
 
 
@@ -137,9 +143,12 @@ padding:40px;
 
 h1{
 
+
 text-align:center;
 
+
 margin-bottom:30px;
+
 
 }
 
@@ -148,15 +157,61 @@ margin-bottom:30px;
 .detail-card{
 
 
-max-width:600px;
+max-width:800px;
+
 
 margin:auto;
 
-padding:30px;
+
+padding:40px;
+
 
 background:#f5f5f5;
 
+
 border-radius:12px;
+
+
+}
+
+
+
+.detail-card h2{
+
+
+font-size:28px;
+
+
+margin-bottom:20px;
+
+
+}
+
+
+
+
+.category{
+
+
+display:inline-block;
+
+
+background:#333;
+
+
+color:white;
+
+
+padding:5px 15px;
+
+
+border-radius:20px;
+
+
+font-size:14px;
+
+
+margin-bottom:20px;
 
 
 }
@@ -168,7 +223,24 @@ border-radius:12px;
 
 color:#888;
 
+
 margin:15px 0;
+
+
+}
+
+
+
+.content{
+
+
+line-height:2;
+
+
+white-space:pre-line;
+
+
+font-size:16px;
 
 
 }
