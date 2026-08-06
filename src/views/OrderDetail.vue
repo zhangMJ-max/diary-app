@@ -73,7 +73,6 @@ v-for="item in order.items"
 >
 
 
-
 <div>
 
 {{item.image}}
@@ -106,6 +105,7 @@ v-for="item in order.items"
 
 
 </div>
+
 
 
 
@@ -164,7 +164,16 @@ v-for="item in order.items"
 
 
 
-<div class="total">
+
+<!-- 点击付款 -->
+
+<div 
+
+class="total"
+
+@click="openPay"
+
+>
 
 
 订单总金额：
@@ -172,7 +181,16 @@ v-for="item in order.items"
 ¥{{order.total || order.totalPrice}}
 
 
+<p class="pay-tip">
+
+点击付款
+
+</p>
+
+
 </div>
+
+
 
 
 
@@ -216,6 +234,7 @@ class="delete"
 
 
 
+
 </div>
 
 
@@ -235,9 +254,101 @@ class="delete"
 
 
 
+
+
+
+<!-- 付款弹窗 -->
+
+
+<div
+
+class="mask"
+
+v-if="showPay"
+
+
+>
+
+
+<div class="pay-box">
+
+
+<h2>
+
+确认付款
+
+</h2>
+
+
+
+<p>
+
+订单金额：
+
+¥{{order.total || order.totalPrice}}
+
+</p>
+
+
+
+<p>
+
+是否付款？
+
+</p>
+
+
+
+
+<div class="pay-actions">
+
+
+<button
+
+@click="cancelPay"
+
+>
+
+否
+
+</button>
+
+
+
+<button
+
+class="confirm"
+
+@click="confirmPay"
+
+>
+
+是
+
+</button>
+
+
+
+</div>
+
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
 </div>
 
 </template>
+
+
+
 
 
 
@@ -262,6 +373,12 @@ const router = useRouter()
 
 
 const order = ref(null)
+
+
+
+// 控制付款弹窗
+
+const showPay = ref(false)
 
 
 
@@ -296,6 +413,124 @@ item.id == route.params.id
 
 
 }
+
+
+
+
+
+
+
+
+
+// 打开付款
+
+function openPay(){
+
+
+
+if(order.value.status === "已付款"){
+
+
+alert("该订单已经付款")
+
+return
+
+
+}
+
+
+
+showPay.value=true
+
+
+}
+
+
+
+
+
+
+
+// 取消付款
+
+function cancelPay(){
+
+
+showPay.value=false
+
+
+}
+
+
+
+
+
+
+
+// 确认付款
+
+function confirmPay(){
+
+
+
+order.value.status="已付款"
+
+
+
+
+
+const data = JSON.parse(
+
+localStorage.getItem("orders")
+
+||
+
+"[]"
+
+)
+
+
+
+const index=data.findIndex(
+
+item=>item.id==order.value.id
+
+)
+
+
+
+
+if(index!==-1){
+
+
+data[index]=order.value
+
+
+}
+
+
+
+localStorage.setItem(
+
+"orders",
+
+JSON.stringify(data)
+
+)
+
+
+
+
+showPay.value=false
+
+
+
+alert("付款成功")
+
+
+
+}
+
 
 
 
@@ -363,6 +598,9 @@ router.push(
 
 
 
+
+
+
 function back(){
 
 
@@ -391,6 +629,9 @@ loadOrder()
 
 
 </script>
+
+
+
 
 
 
@@ -452,6 +693,7 @@ box-shadow:
 
 
 
+
 .product{
 
 
@@ -484,8 +726,6 @@ font-weight:bold;
 
 
 
-
-
 .total{
 
 
@@ -501,10 +741,25 @@ font-size:25px;
 
 text-align:center;
 
+cursor:pointer;
+
 
 }
 
 
+
+
+.pay-tip{
+
+
+font-size:14px;
+
+margin-top:10px;
+
+opacity:.7;
+
+
+}
 
 
 
@@ -553,6 +808,88 @@ cursor:pointer;
 
 
 background:#e63946;
+
+
+}
+
+
+
+
+
+
+/* 遮罩 */
+
+
+.mask{
+
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+right:0;
+
+bottom:0;
+
+background:rgba(0,0,0,.5);
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+
+}
+
+
+
+
+
+
+.pay-box{
+
+
+background:white;
+
+width:350px;
+
+padding:35px;
+
+border-radius:15px;
+
+text-align:center;
+
+
+}
+
+
+
+
+
+.pay-actions{
+
+
+display:flex;
+
+justify-content:center;
+
+gap:30px;
+
+margin-top:25px;
+
+
+}
+
+
+
+
+.confirm{
+
+
+background:#2a9d8f;
 
 
 }
