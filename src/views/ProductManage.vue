@@ -9,7 +9,7 @@
 
 
 
-
+<!-- 新增商品 -->
 
 <div class="add">
 
@@ -17,7 +17,6 @@
 <h2>
 新增商品
 </h2>
-
 
 
 
@@ -41,7 +40,6 @@ placeholder="商品价格"
 
 
 
-
 <input
 
 v-model="image"
@@ -50,6 +48,15 @@ placeholder="商品图标"
 
 />
 
+
+
+<input
+
+v-model="description"
+
+placeholder="商品描述"
+
+/>
 
 
 
@@ -68,6 +75,7 @@ placeholder="商品图标"
 
 
 
+<!-- 商品列表 -->
 
 <div class="list">
 
@@ -79,12 +87,11 @@ placeholder="商品图标"
 
 
 
-
 <div
 
 class="item"
 
-v-for="product in productStore.products"
+v-for="(product,index) in productStore.products"
 
 :key="product.id"
 
@@ -92,15 +99,15 @@ v-for="product in productStore.products"
 
 
 
-<div class="info">
 
+<div class="info">
 
 
 <p>
 
 商品编号：
 
-{{product.id}}
+{{index + 1}}
 
 </p>
 
@@ -121,7 +128,16 @@ v-for="product in productStore.products"
 
 
 
+<p>
+
+{{product.description}}
+
+</p>
+
+
 </div>
+
+
 
 
 
@@ -143,24 +159,20 @@ v-model="product.price"
 
 
 
-</div>
-
-
-
-
-
-
 
 <button
 
-@click="save(product)"
+@click="update(product)"
 
 >
 
-保存价格
+保存修改
 
 </button>
 
+
+
+</div>
 
 
 
@@ -182,21 +194,21 @@ class="delete"
 
 
 
-</div>
-
-
 
 </div>
 
 
 
 
+</div>
+
+
 
 
 </div>
-
 
 </template>
+
 
 
 
@@ -206,38 +218,59 @@ class="delete"
 <script setup>
 
 
-import {ref} from "vue"
+import {ref,onMounted} from "vue"
 
+import axios from "axios"
 
 import {useProductStore} from "../stores/product"
 
 
 
-const productStore=useProductStore()
+const productStore = useProductStore()
+
+
+
+const name = ref("")
+
+const price = ref("")
+
+const image = ref("")
+
+const description = ref("")
 
 
 
 
 
-const name=ref("")
 
-const price=ref("")
+// 页面加载商品
 
-const image=ref("")
-
+onMounted(()=>{
 
 
+productStore.fetchProducts()
+
+
+})
 
 
 
 
-function add(){
+
+
+
+// 新增商品
+
+async function add(){
 
 
 
 if(
+
 !name.value ||
+
 !price.value
+
 ){
 
 
@@ -249,26 +282,36 @@ return
 
 
 
+try{
 
 
-productStore.addProduct({
+await axios.post(
 
+"http://localhost:3000/api/products",
 
-id:Date.now(),
+{
 
 
 name:name.value,
 
-
 price:Number(price.value),
 
+image:image.value || "📦",
 
-image:image.value || "📦"
-
-
-})
+description:description.value
 
 
+}
+
+)
+
+
+
+alert("商品添加成功")
+
+
+
+productStore.fetchProducts()
 
 
 
@@ -278,9 +321,20 @@ price.value=""
 
 image.value=""
 
+description.value=""
 
 
-alert("商品新增成功")
+}
+
+catch(error){
+
+
+console.log(error)
+
+alert("添加失败")
+
+
+}
 
 
 
@@ -293,15 +347,26 @@ alert("商品新增成功")
 
 
 
-function save(product){
+// 修改价格
+
+async function update(product){
 
 
 
-productStore.updatePrice(
+try{
 
-product.id,
 
-Number(product.price)
+await axios.put(
+
+`http://localhost:3000/api/products/${product.id}`,
+
+{
+
+
+price:Number(product.price)
+
+
+}
 
 )
 
@@ -310,6 +375,25 @@ Number(product.price)
 alert("价格修改成功")
 
 
+
+productStore.fetchProducts()
+
+
+
+}
+
+catch(error){
+
+
+console.log(error)
+
+alert("修改失败")
+
+
+}
+
+
+
 }
 
 
@@ -319,16 +403,53 @@ alert("价格修改成功")
 
 
 
-function remove(id){
+
+// 删除商品
+
+async function remove(id){
 
 
 
 if(
-confirm("确定删除该商品吗？")
+
+!confirm("确定删除该商品吗？")
+
 ){
 
 
-productStore.deleteProduct(id)
+return
+
+}
+
+
+
+try{
+
+
+await axios.delete(
+
+`http://localhost:3000/api/products/${id}`
+
+)
+
+
+
+alert("删除成功")
+
+
+
+productStore.fetchProducts()
+
+
+
+}
+
+catch(error){
+
+
+console.log(error)
+
+alert("删除失败")
 
 
 }
@@ -336,10 +457,13 @@ productStore.deleteProduct(id)
 
 
 }
+
+
 
 
 
 </script>
+
 
 
 
@@ -363,7 +487,6 @@ padding:40px;
 
 
 
-
 h1{
 
 
@@ -373,7 +496,6 @@ margin-bottom:40px;
 
 
 }
-
 
 
 
@@ -399,7 +521,6 @@ box-shadow:
 
 
 
-
 input{
 
 
@@ -413,8 +534,6 @@ border:1px solid #ddd;
 
 
 }
-
-
 
 
 
@@ -439,7 +558,6 @@ cursor:pointer;
 
 
 
-
 .item{
 
 
@@ -458,15 +576,13 @@ border-bottom:1px solid #eee;
 
 
 
-
 .info{
 
 
-width:250px;
+width:350px;
 
 
 }
-
 
 
 
@@ -485,14 +601,27 @@ margin:8px 0;
 .emoji{
 
 
-font-size:30px;
+font-size:28px;
 
-margin-right:15px;
+margin-right:10px;
 
 
 }
 
 
+
+
+.price-box{
+
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+
+}
 
 
 
@@ -503,7 +632,6 @@ width:80px;
 
 
 }
-
 
 
 

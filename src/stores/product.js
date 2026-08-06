@@ -1,6 +1,8 @@
-import {defineStore} from "pinia"
+import { defineStore } from "pinia"
 
-import {ref,watch} from "vue"
+import { ref } from "vue"
+
+import axios from "axios"
 
 
 
@@ -8,134 +10,116 @@ export const useProductStore = defineStore(
 "product",
 ()=>{
 
-const products = ref(
 
-JSON.parse(
-
-localStorage.getItem("products")
-
-||
-
-JSON.stringify([
-
-{
-id:1,
-name:"机械键盘",
-price:399,
-image:"⌨️"
-},
-
-{
-id:2,
-name:"无线耳机",
-price:599,
-image:"🎧"
-},
-
-{
-id:3,
-name:"办公鼠标",
-price:199,
-image:"🖱️"
-}
-
-])
-
-)
-
-)
+const products = ref([])
 
 
 
-function addProduct(product){
+// 获取商品列表
+
+async function fetchProducts(){
 
 
-products.value.push(product)
+    try{
+
+
+        const res = await axios.get(
+
+            "http://localhost:3000/api/products"
+
+        )
+
+
+        products.value = res.data
+
+
+
+    }catch(error){
+
+
+        console.log(
+            "获取商品失败",
+            error
+        )
+
+
+    }
 
 
 }
 
 
 
+
+// 添加商品（暂时保留）
+
+async function addProduct(product){
+
+
+    products.value.push(product)
+
+
+}
+
+
+
+// 删除商品（暂时保留）
 
 function deleteProduct(id){
 
 
-products.value = products.value.filter(
+    products.value = products.value.filter(
 
-item=>item.id!==id
+        item => item.id !== id
 
-)
+    )
 
 
 }
 
 
 
+// 修改价格（暂时保留）
 
 function updatePrice(id,price){
 
 
-const product = products.value.find(
+    const product = products.value.find(
 
-item=>item.id===id
+        item => item.id === id
 
-)
-
-
-
-if(product){
+    )
 
 
-product.price = Number(price)
+    if(product){
+
+
+        product.price = Number(price)
+
+
+    }
 
 
 }
-
-
-}
-
-
-
-
-watch(
-
-products,
-
-(value)=>{
-
-
-localStorage.setItem(
-
-"products",
-
-JSON.stringify(value)
-
-)
-
-
-},
-
-{
-
-deep:true
-
-}
-
-)
 
 
 
 return{
 
 
-products,
+    products,
 
-addProduct,
 
-deleteProduct,
+    fetchProducts,
 
-updatePrice
+
+    addProduct,
+
+
+    deleteProduct,
+
+
+    updatePrice
 
 
 }

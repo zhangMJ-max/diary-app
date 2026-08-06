@@ -47,16 +47,19 @@ v-for="item in productStore.products"
 
 <script setup>
 
-
 import ProductCard from "../components/ProductCard.vue"
 
-
-import {useProductStore} from "../stores/product"
-
+import { useProductStore } from "../stores/product"
 
 
 
 const productStore = useProductStore()
+
+
+
+// 页面加载时获取数据库商品
+
+productStore.fetchProducts()
 
 
 
